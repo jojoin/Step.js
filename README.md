@@ -3,7 +3,9 @@ Step.js
 
 Node.js 控制流程工具。解决Node.js读文件、查询数据库等回调函数相互依赖，或者分别获取内容最后组合数据返回等应用情景。
 
-## Example 使用示例
+
+
+### Example 使用示例
 
 回调函数顺序依赖、依次执行。适用于下一个回调函数依赖于上一个函数执行的结果。
 
@@ -31,6 +33,7 @@ Step.Step(function(result,entire){
   console.log(result); // 'abc' 
   console.log(entire); // ['abc']  
   return 123; //return ::返回一个非undefined的值，和调用this.step();效果相同
+  /*注意：如果未返回数据，或者未调用this.step()，将会中断回调的执行，后面的回调都不会执行！！！*/
   
 },function(result,entire){
  
@@ -59,21 +62,22 @@ Step.Step(function(result,entire){
 
 此方法传入的最后一个参数函数，将被作为最终的结果处理程序而不是单个获取数据的步骤。
 
+
 示例代码：
 
 ```javascript
 var Step = require('Step.js');
 
-Step.Assem(function(){
+Step.Assem(function(step,index){
 
   var that =this;
   setTimeout(function(){
-    that.step('abc');
+    that.step('abc'); //表示数据获取完毕
   },1000);
   
 },function(){
-
   return 123; //return ::返回一个非undefined的值，和调用this.step();效果相同
+  /*注意：如果未返回数据，或者未调用this.step()，将会导致最终的数据处理程序不被调用！！！*/
   
 },function(){
  
@@ -90,6 +94,33 @@ Step.Assem(function(){
 });
 ```
 
+
+### API & DOC
+
+#### Step(func,[func,[func,[...]]])
+
+步骤次序、回调依赖、依次执行处理。函数参数被依次执行
+
+#### Assem(func,func,[func,[...]])
+
+组装所有回调产生的结果，并把所有结果按调用次序组成数组，作为参数传给最后一个函数处理。
+
+#### 作为参数的回调函数内部 this ：
+#### this.index 
+
+一个大于等于0的整数，表示这个函数被调用的次序，而不是返回结果的次序。
+
+#### this.step()
+
+表示一个步骤执行完成，可以把获取的数据作为参数传递给它。
+
+
+
+## 许可证（MIT）
+
+版权所有（c）2013 杨捷<http://jojoin.com/user/1/>
+
+你可以随意使用并修改此模块的内容，但不能替换或修改作者的名称及主页。
 
 
 
