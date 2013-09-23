@@ -9,11 +9,10 @@ Node.js 控制流程工具。解决Node.js读文件、查询数据库等回调�
 
 使用方法：`Step.Step(func,[func,[func,[...]]]);`，函数参数为任意数量的回调函数。也可以是一个类、函数数组或者它们的组合。
 
-当上一个回调执行完成返回__非__`undefined`的结果时，或者在回调内部中调用`this.step()`时，表示这个回调执行完成，
+当上一个回调执行完成返回 非 `undefined`的结果时，或者在回调内部中调用`this.step()`时，表示这个回调执行完成，
 并把其结果作为下一个回调的第一个参数，把所有执行结果按次序组成的的数组作为下一个回调的第二个参数。
 
 示例代码：
-
 
 ```javascript
 var Step = require('Step.js');
@@ -50,3 +49,60 @@ Step.Step(function(result,entire){
   
 });
 ```
+
+组装回调函数的结果，此方法不同于上面的依赖串联执行，所有的回调是并行执行的，
+只不过是在最后一个回调返回结果时，才调用最终处理函数。
+
+使用方法：`Step.Assem(func,[func,[func,[...]]]);`，函数参数为任意数量的回调函数。也可以是一个类、函数数组或者它们的组合。
+
+此方法的参数数量必须大于等于 2 个，函数才能被有效执行。
+
+此方法传入的最后一个参数函数，将被作为最终的结果处理程序而不是单个获取数据的步骤。
+
+示例代码：
+
+```javascript
+var Step = require('Step.js');
+
+Step.Assem(function(){
+
+  var that =this;
+  setTimeout(function(){
+    that.step('abc');
+  },1000);
+  
+},function(){
+
+  return 123; //return ::返回一个非undefined的值，和调用this.step();效果相同
+  
+},function(){
+ 
+  var that=this;
+  setTimeout(function(){
+    that.step({abc:123});
+    console.log(that.index); //that.index为一个整数，代表回调被调用的次序，而不是返回结果的次序。
+  },200);
+  
+},function(result){
+
+  console.log(result); // [ 'abc', 123, { abc: 123 } ]
+  
+});
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
