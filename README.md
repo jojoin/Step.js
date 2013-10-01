@@ -114,6 +114,14 @@ Step.Assem(function(step,index){
 
 表示一个步骤执行完成，可以把获取的数据作为参数传递给它。
 
+#### this.stop()
+
+终止所有步骤的执行。
+
+#### this.end()
+
+跳到最后一步执行。
+
 
 
 ## 许可证（MIT）
