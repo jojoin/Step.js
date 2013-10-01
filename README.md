@@ -118,9 +118,9 @@ Step.Assem(function(step,index){
 
 终止所有步骤的执行。
 
-#### this.end()
+#### this.end(data)
 
-跳到最后一步执行。
+跳到最后一步执行，data作为最后一个函数的第一个参数传入。
 
 
 
