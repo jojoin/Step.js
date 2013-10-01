@@ -23,7 +23,7 @@ exports.Step = function(){
     oneStep();
     //处理下一步
     function oneStep(){
-        if(stepFuncAryLeg>0&&stepNum<stepFuncAryLeg){
+        if(stepFuncAryLeg>0){
             var callbackThis = new stepThis(stepNum,dataBack)
                 , peviData = (stepNum-1>=0)?stepDataAry[stepNum-1]:undefined  //上一步产生的数据
                 , redata = stepFuncAry[stepNum].call(callbackThis,peviData,stepDataAry); //调用数据处理函数，把上一步数据，和全部数据作为参数
@@ -31,20 +31,35 @@ exports.Step = function(){
         }
     }
     //数据返回处理函数
-    function dataBack(data){
-        if(stepDataAry[stepNum]===undefined){
+    function dataBack(data,ctrl){
+        if(ctrl=='stop'){
+            stepNum=stepFuncAryLeg; //终止执行
+        }else if(ctrl=='end'){
+            stepNum=stepFuncAryLeg-1; //跳到最后一步
+        }
+        if(stepNum<stepFuncAryLeg
+            &&stepDataAry[stepNum]===undefined){
             stepDataAry[stepNum] = data;
             stepNum++;
             oneStep(); //执行下一步
         }
+
     }
 };
+
+
 //外部回调函数this对象
 function stepThis(index,dataBack){
     this.index = index;
     this.step = function(data){
         dataBack(data);
-    }
+    };
+    this.end = function(data){
+        dataBack(data,'end'); //跳到最后一步
+    };
+    this.stop = function(){
+        dataBack('','stop'); //停止执行后面所有步骤
+    };
 }
 
 
