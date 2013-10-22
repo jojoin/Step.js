@@ -17,13 +17,12 @@ exports.Step = function(){
     var stepFuncAry = []   //组装回调函数
         , stepDataAry = []   //组装数据
         , stepNum = 0;
-    recursionStepFunc(arguments,stepFuncAry); //递归函数列表
-    //console.log(stepFuncAry);
+    RecursionStepFunc(arguments,stepFuncAry); //递归函数列表
     var stepFuncAryLeg = stepFuncAry.length;
     oneStep();
     //处理下一步
     function oneStep(){
-        if(stepFuncAryLeg>0){
+        if(stepFuncAryLeg>0&&typeof stepFuncAry[stepNum]=='function'){
             var callbackThis = new stepThis(stepNum,dataBack)
                 , peviData = (stepNum-1>=0)?stepDataAry[stepNum-1]:undefined  //上一步产生的数据
                 , redata = stepFuncAry[stepNum].call(callbackThis,peviData,stepDataAry); //调用数据处理函数，把上一步数据，和全部数据作为参数
@@ -32,15 +31,15 @@ exports.Step = function(){
     }
     //数据返回处理函数
     function dataBack(data,ctrl){
-        if(ctrl=='stop'){
-            stepNum=stepFuncAryLeg; //终止执行
-        }else if(ctrl=='end'){
-            stepNum=stepFuncAryLeg-1; //跳到最后一步
-        }
-        if(stepNum<stepFuncAryLeg
-            &&stepDataAry[stepNum]===undefined){
+        if(stepNum<stepFuncAryLeg&&stepDataAry[stepNum]===undefined){
             stepDataAry[stepNum] = data;
-            stepNum++;
+            if(ctrl=='stop'){
+                stepNum=stepFuncAryLeg; //终止执行
+            }else if(ctrl=='end'){
+                stepNum=stepFuncAryLeg-1; //跳到最后一步
+            }else{
+                stepNum++;
+            }
             oneStep(); //执行下一步
         }
 
@@ -65,7 +64,6 @@ function stepThis(index,dataBack){
 
 
 
-
 /**
  * 组装数据功能
  * 接受回调函数列表，每一个函数需要执行this.step()函数
@@ -75,7 +73,7 @@ exports.Assem = function(){
     var stepFuncAry = []   //组装回调函数
         , stepDataAry = []   //组装数据
         , stepNum = 0;
-    recursionStepFunc(arguments,stepFuncAry); //递归函数列表
+    RecursionStepFunc(arguments,stepFuncAry); //递归函数列表
     var stepFuncAryLeg = stepFuncAry.length - 1;
     for(var k=0;k<stepFuncAryLeg;k++){
         var callbackThis = new assemThis(k,dataBack)
@@ -94,6 +92,8 @@ exports.Assem = function(){
         }
     }
 };
+
+
 //外部回调函数this对象
 function assemThis(index,dataBack){
     this.index = index;
@@ -104,15 +104,14 @@ function assemThis(index,dataBack){
 
 
 
-
 /**
  * 递归一维组装回调函数
  */
-function recursionStepFunc(one,stepFuncAry){
+function RecursionStepFunc(one,stepFuncAry){
     if(typeof one=='function') stepFuncAry.push(one);
     else if(typeof one=='object'){
         for(var k in one){
-            recursionStepFunc(one[k],stepFuncAry);
+            RecursionStepFunc(one[k],stepFuncAry);
         }
     }
 }
