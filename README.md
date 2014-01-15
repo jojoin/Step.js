@@ -1,6 +1,4 @@
-
-**本工具已经集成至框架：[Codekart](https://github.com/myworld4059/Codekart)，欢迎使用！**
-
+**【本工具已经集成至框架：[Codekart](https://github.com/myworld4059/Codekart)，欢迎使用！】**
 Step.js
 =======
 
