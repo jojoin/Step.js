@@ -1,3 +1,6 @@
+
+**本工具已经集成至框架：[Codekart](https://github.com/myworld4059/Codekart)，欢迎使用！**
+
 Step.js
 =======
 
@@ -129,7 +132,6 @@ Step.Assem(function(step,index){
 版权所有（c）2013 杨捷<http://jojoin.com/user/1/>
 
 你可以随意使用并修改此模块的内容，但不能替换或修改作者的名称及主页。
-
 
 
 
